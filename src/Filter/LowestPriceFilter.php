@@ -20,14 +20,15 @@ class LowestPriceFilter implements PromotionsFilterInterface
 
         foreach ($promotions as $promotion) {
             $priceModifier = $this->priceModifierFactory->create($promotion->getType());
-
-
             $modifiedPrice = $priceModifier->modify($price, $quantity, $promotion, $enquiry);
 
-            $enquiry->setDiscountedPrice(250);
-            $enquiry->setPrice(100);
-            $enquiry->setPromotionId(3);
-            $enquiry->setPromotionName('Black friday');
+            if($lowestPrice > $modifiedPrice){
+                $enquiry->setDiscountedPrice($modifiedPrice);
+                $enquiry->setPromotionId($promotion->getId());
+                $enquiry->setPromotionName($promotion->getName());
+
+                $lowestPrice = $modifiedPrice;
+            }
         }
         return $enquiry;
     }

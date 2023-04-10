@@ -19,7 +19,10 @@ class LowestPriceFilterTest extends ServiceTestCase
 
         $enquiry = new LowestPriceEnquiry();
         $enquiry->setProduct($product);
+        $enquiry->setPrice($product->getPrice());
         $enquiry->setQuantity(5);
+        $enquiry->setRequestDate('2023-04-09');
+        $enquiry->setVoucherCode('OU812');
 
         $promotions = $this->promotionsDataProvider();
         $lowestPriceFilter = $this->container->get(LowestPriceFilter::class);
