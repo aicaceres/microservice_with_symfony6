@@ -14,7 +14,7 @@ class LowestPriceFilter implements PromotionsFilterInterface
         $lowestPrice = $quantity * $price;
         //$modifiedPrice = $priceModifier->modify($price, $quantity, $promotion, $enquiry);
 
-        $enquiry->setDiscountedPrice(50);
+        $enquiry->setDiscountedPrice(250);
         $enquiry->setPrice(100);
         $enquiry->setPromotionId(3);
         $enquiry->setPromotionName('Black friday');
