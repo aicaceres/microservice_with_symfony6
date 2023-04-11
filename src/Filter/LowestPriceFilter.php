@@ -20,6 +20,7 @@ class LowestPriceFilter implements PriceFilterInterface
         $lowestPrice = $quantity * $price;
 
         foreach ($promotions as $promotion) {
+
             $priceModifier = $this->priceModifierFactory->create($promotion->getType());
             $modifiedPrice = $priceModifier->modify($price, $quantity, $promotion, $enquiry);
 

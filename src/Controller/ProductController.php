@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Cache\PromotionCache;
 use App\DTO\LowestPriceEnquiry;
 use App\Entity\Promotion;
+use App\Filter\PriceFilterInterface;
 use App\Filter\PromotionsFilterInterface;
 use App\Repository\ProductRepository;
 use App\Service\Serializer\DTOSerializer;
@@ -13,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class ProductController extends AbstractController
 {
@@ -29,7 +32,8 @@ class ProductController extends AbstractController
         Request $request,
         int $id,
         DTOSerializer $serializer,
-        PromotionsFilterInterface $promotionsFilter
+        PriceFilterInterface $promotionsFilter,
+        PromotionCache $promotionCache,
     ): Response
     {
         if ($request->headers->has('force_fail')) {
@@ -44,10 +48,8 @@ class ProductController extends AbstractController
         $product = $this->repository->find($id);
         // add error handling for not found
         $lowestPriceEnquiry->setProduct($product);
-        $promotions = $this->entityManager->getRepository(Promotion::class)->findValidForProduct(
-            $product,
-            date_create_immutable($lowestPriceEnquiry->getRequestDate())
-        );
+
+        $promotions = $promotionCache->findValidForProduct($product, $lowestPriceEnquiry->getRequestDate());
 
         $modifiedEnquiry = $promotionsFilter->apply($lowestPriceEnquiry, ...$promotions);
 
